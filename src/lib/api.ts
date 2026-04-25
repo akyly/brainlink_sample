@@ -13,8 +13,9 @@ export async function apiRequest<T>(
   if (!res.ok) {
     let message = `Request failed (${res.status})`
     try {
-      const data = (await res.json()) as { error?: string }
-      if (data?.error) message = data.error
+      const data = (await res.json()) as { error?: string; detail?: string }
+      if (data?.error && data?.detail) message = `${data.error}: ${data.detail}`
+      else if (data?.error) message = data.error
     } catch {
       // ignore parse failures
     }
@@ -22,4 +23,3 @@ export async function apiRequest<T>(
   }
   return (await res.json()) as T
 }
-
